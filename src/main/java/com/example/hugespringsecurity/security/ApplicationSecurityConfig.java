@@ -42,15 +42,21 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 User.builder()
                         .username("anna")
                         .password(passwordEncoder().encode("student"))
-//                        .roles(STUDENT.name()).build(),
+//                        .roles(STUDENT.name())
+                        .authorities(STUDENT.getGrantedAuthority())
+                        .build(),
                 User.builder()
                         .username("linda")
                         .password(passwordEncoder().encode("admin"))
-//                        .roles(ADMIN.name()).build(),
+//                        .roles(ADMIN.name())
+                        .authorities(ADMIN.getGrantedAuthority())
+                        .build(),
                 User.builder()
                         .username("tom")
                         .password(passwordEncoder().encode("admin"))
-//                        .roles(ADMIN_TRAINEE.name()).build()
+//                        .roles(ADMIN_TRAINEE.name())
+                        .authorities(ADMIN_TRAINEE.getGrantedAuthority())
+                        .build()
         );
     }
 
