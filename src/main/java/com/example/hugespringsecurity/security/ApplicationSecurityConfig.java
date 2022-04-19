@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static com.example.hugespringsecurity.security.ApplicationUserPermission.COURSE_WRITE;
 import static com.example.hugespringsecurity.security.ApplicationUserRole.*;
@@ -36,9 +37,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/courses", true)
-                .and()
-                .rememberMe();
+                .defaultSuccessUrl("/courses", true);
+//                .and()
+//                .logout().logoutUrl("/logout")
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+//                .clearAuthentication(true)
+//                .invalidateHttpSession(true)
+//                .deleteCookies("JSESSIONID")
+//                .logoutSuccessUrl("/login");
     }
 
     @Override
