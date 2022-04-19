@@ -1,8 +1,11 @@
 package com.example.hugespringsecurity.security;
 
+import com.example.hugespringsecurity.auth.ApplicationUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,6 +24,12 @@ import static com.example.hugespringsecurity.security.ApplicationUserRole.*;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final ApplicationUserService applicationUserService;
+
+    public ApplicationSecurityConfig(ApplicationUserService applicationUserService) {
+        this.applicationUserService = applicationUserService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,29 +57,42 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(
-                User.builder()
-                        .username("anna")
-                        .password(passwordEncoder().encode("student"))
-//                        .roles(STUDENT.name())
-                        .authorities(STUDENT.getGrantedAuthority())
-                        .build(),
-                User.builder()
-                        .username("linda")
-                        .password(passwordEncoder().encode("admin"))
-//                        .roles(ADMIN.name())
-                        .authorities(ADMIN.getGrantedAuthority())
-                        .build(),
-                User.builder()
-                        .username("tom")
-                        .password(passwordEncoder().encode("admin"))
-//                        .roles(ADMIN_TRAINEE.name())
-                        .authorities(ADMIN_TRAINEE.getGrantedAuthority())
-                        .build()
-        );
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(applicationUserService);
+        return provider;
+    }
+
+//    @Override
+//    @Bean
+//    protected UserDetailsService userDetailsService() {
+//        return new InMemoryUserDetailsManager(
+//                User.builder()
+//                        .username("anna")
+//                        .password(passwordEncoder().encode("student"))
+////                        .roles(STUDENT.name())
+//                        .authorities(STUDENT.getGrantedAuthority())
+//                        .build(),
+//                User.builder()
+//                        .username("linda")
+//                        .password(passwordEncoder().encode("admin"))
+////                        .roles(ADMIN.name())
+//                        .authorities(ADMIN.getGrantedAuthority())
+//                        .build(),
+//                User.builder()
+//                        .username("tom")
+//                        .password(passwordEncoder().encode("admin"))
+////                        .roles(ADMIN_TRAINEE.name())
+//                        .authorities(ADMIN_TRAINEE.getGrantedAuthority())
+//                        .build()
+//        );
+//    }
 
     @Bean
     protected PasswordEncoder passwordEncoder() {
